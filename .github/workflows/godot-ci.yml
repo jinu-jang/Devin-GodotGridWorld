@@ -13,19 +13,19 @@ jobs:
       uses: actions/cache@v3
       with:
         path: |
-          Godot_v4.2.1-stable_linux_headless.64
-          Godot_v4.2.1-stable_linux_headless.64.zip
+          Godot_v4.2.1-stable_linux_server.64
+          Godot_v4.2.1-stable_linux_server.64.zip
         key: ${{ runner.os }}-godot-4.2.1
     - name: Download Godot
       run: |
-        if [ ! -f Godot_v4.2.1-stable_linux_headless.64 ]; then
-          curl --connect-timeout 30 --retry 5 --retry-delay 0 --retry-max-time 120 --fail --location -o Godot_v4.2.1-stable_linux_headless.64.zip https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux_headless.64.zip
+        if [ ! -f Godot_v4.2.1-stable_linux_server.64 ]; then
+          curl --connect-timeout 30 --retry 5 --retry-delay 0 --retry-max-time 120 --fail --location -o Godot_v4.2.1-stable_linux_server.64.zip https://downloads.tuxfamily.org/godotengine/4.2.1/Godot_v4.2.1-stable_linux_server.64.zip
           if [ $? -ne 0 ]; then
-            echo "Failed to download Godot headless binary."
+            echo "Failed to download Godot server binary."
             exit 1
           fi
-          unzip Godot_v4.2.1-stable_linux_headless.64.zip
-          chmod +x Godot_v4.2.1-stable_linux_headless.64
+          unzip Godot_v4.2.1-stable_linux_server.64.zip
+          chmod +x Godot_v4.2.1-stable_linux_server.64
         fi
     - name: Run tests
-      run: ./Godot_v4.2.1-stable_linux_headless.64 -d -s --path . addons/gut/gut_cmdln.gd
+      run: ./Godot_v4.2.1-stable_linux_server.64 --headless -d -s --path . addons/gut/gut_cmdln.gd
