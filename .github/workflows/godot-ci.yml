@@ -1,0 +1,31 @@
+name: Godot CI
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Cache Godot
+      uses: actions/cache@v3
+      with:
+        path: |
+          Godot_v4.2.1-stable_linux_server.64
+          Godot_v4.2.1-stable_linux_server.64.zip
+        key: ${{ runner.os }}-godot-4.2.1
+    - name: Download Godot
+      run: |
+        if [ ! -f Godot_v4.2.1-stable_linux_server.64 ]; then
+          curl --connect-timeout 30 --retry 5 --retry-delay 0 --retry-max-time 120 --fail --location -o Godot_v4.2.1-stable_linux_server.64.zip https://github.com/godotengine/godot/releases/download/4.2.1-stable/Godot_v4.2.1-stable_linux.x86_64.zip
+          if [ $? -ne 0 ]; then
+            echo "Failed to download Godot server binary."
+            exit 1
+          fi
+          unzip -o Godot_v4.2.1-stable_linux_server.64.zip
+          chmod +x Godot_v4.2.1-stable_linux_server.64
+        fi
+    - name: Run tests
+      run: ./Godot_v4.2.1-stable_linux_server.64 --headless -d -s --path . addons/gut/gut_cmdln.gd
